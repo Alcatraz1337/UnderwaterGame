@@ -1,6 +1,10 @@
+from multiprocessing.spawn import import_main_path
 import sys
 import pygame
-import agent
+import Agent as ag
+import Obstacles as ob
+import GameManager as gm
+import random
 
 pygame.init()
 
@@ -11,37 +15,59 @@ speed = [1, 1]
 # Color definition
 black = 0,0,0
 white = 255,255,255
-available = 128,128,128 
-connected = 60,142,100
-blocked = 236,19,22
 
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode(size)
 
-# Set agents properties
-ball1, ball2, ball3, ball4, ball5 = [200, 25], [34,146], [88,312], [312,312], [366,146]
-radius = 5
-ball1rect = pygame.draw.circle(screen, white, ball1, radius)
-ball2rect = pygame.draw.circle(screen, white, ball2, radius)
-ball3rect = pygame.draw.circle(screen, white, ball3, radius)
-ball4rect = pygame.draw.circle(screen, white, ball4, radius)
-ball5rect = pygame.draw.circle(screen, white, ball5, radius)
+# Test Agent and test screen display
+a0 = ag.Agent([200, 25], 5, screen)
+a1 = ag.Agent([34, 146], 5, screen)
+a2 = ag.Agent([88, 312], 5, screen)
+a3 = ag.Agent([312, 312], 5, screen)
+a4 = ag.Agent([366, 146], 5, screen)
+o0 = ob.Obstacles((50, 50, 100, 75), [random.randint(2,8), random.randint(2,8)])
+o1 = ob.Obstacles((300, 200, 90, 67), [random.randint(2,6), random.randint(2,6)])
+A = []
+O = []
+A.append(a0)
+A.append(a1)
+A.append(a2)
+A.append(a3)
+A.append(a4)
+O.append(o0)
+O.append(o1)
 
-# Set obstacles properties
 
-def DrawAgents():
-    pygame.draw.circle(screen, white, ball1, radius)
-    pygame.draw.circle(screen, white, ball2, radius)
-    pygame.draw.circle(screen, white, ball3, radius)
-    pygame.draw.circle(screen, white, ball4, radius)
-    pygame.draw.circle(screen, white, ball5, radius)
 
 while 1:
-    timeDelta = clock.tick(60)
+    timeDelta = clock.tick()
+    i:ob.Obstacles
+    j:ag.Agent
     for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
+    
+    for i in O:
+        i.Move()
+        i.CheckCollisionWithAgents(A)
+        i.CheckCollisionWithScreen(screen)
 
-    #Update screen
     screen.fill(black)
-    DrawAgents()
+    for j in A:
+        j.DrawAgent(screen)
+    
+    for i in O:
+        i.DrawObstacle(screen)
+    gm.DrawConnection(A, screen)
+    
     pygame.display.update()
+    
+
+    # o1.Move()
+    # o1.CheckCollisionWithAgents(A)
+    # o1.CheckCollisionWithScreen(screen)
+    # #Update screen
+    # screen.fill((0,0,0))
+    # A[0].DrawAgent(screen)
+    # aRect = a.GetRect()
+    # o.DrawObstacle(screen)
+    # pygame.display.update()

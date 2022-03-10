@@ -1,6 +1,3 @@
-from imghdr import tests
-from imp import source_from_cache
-from msilib.schema import Class
 import sys
 from turtle import screensize
 import pygame
@@ -27,8 +24,8 @@ class Agent:
     def GetRect(self):
         return self.rect
                       
-def DrawAgent(agent:Agent, screen:pygame.Surface):
-    pygame.draw.circle(screen, agent.color, agent.GetCoordinate(), agent.radius)
+    def DrawAgent(self, screen:pygame.Surface):
+        pygame.draw.circle(screen, self.color, self.GetCoordinate(), self.radius)
 
 # # Test Agent and test screen display
 # a = Agent([200, 25], 5, testScreen)

@@ -1,15 +1,8 @@
-from cgi import test
-from email.errors import ObsoleteHeaderDefect
-from turtle import speed
+import copy
 import pygame
-import agent
+import Agent
 import random
 import sys
-
-# Test screen
-pygame.init()
-testScreen = pygame.display.set_mode((400, 400))
-clock = pygame.time.Clock()
 
 class Obstacles:
     def __init__(self, rect:tuple, speed:list) -> None:
@@ -33,13 +26,14 @@ class Obstacles:
     def CheckCollisionWithAgents(self, Agents:list):
         index = self.rect.collidelist(Agents)
         if index >=0 :
-            temp_obs = Obstacles(self.rect, self.speed)
+            # temp_obs = Obstacles(self.rect, self.speed)
+            temp_obs = copy.deepcopy(self)
             while temp_obs.rect.colliderect(Agents[index].rect):
                 if temp_obs.speed[1] * self.speed[1] > 0:
                     temp_obs.speed[0] = self.speed[0]
-                    temp_obs.speed[1] = -self.speed[1]
+                    temp_obs.speed[1] = -self.speed[1]*2 # Prevent the obs stay at the same position when collide
                 else:
-                    temp_obs.speed[0] = -self.speed[0]
+                    temp_obs.speed[0] = -self.speed[0]*2 # Same as above
                     temp_obs.speed[1] = self.speed[1]
                 temp_obs.rect = temp_obs.rect.move(temp_obs.speed)
             if temp_obs.speed[0] * self.speed[0] > 0:
@@ -51,23 +45,3 @@ class Obstacles:
         pygame.draw.rect(screen, self.color, self.rect)
             
 
-# Test Agent and test screen display
-a = agent.Agent([200, 25], 5, testScreen)
-o = Obstacles((50, 50, 120, 90), [3, 2])
-A = []
-A.append(a)
-
-while 1:
-    timeDelta = clock.tick(60)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT: sys.exit()
-
-    o.Move()
-    o.CheckCollisionWithAgents(A)
-    o.CheckCollisionWithScreen(testScreen)
-    #Update screen
-    testScreen.fill((0,0,0))
-    agent.DrawAgent(a, testScreen)
-    aRect = a.GetRect()
-    o.DrawObstacle(testScreen)
-    pygame.display.update()
