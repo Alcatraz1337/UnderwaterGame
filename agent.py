@@ -1,5 +1,4 @@
 import sys
-from turtle import screensize
 import pygame
 
 # Test screen

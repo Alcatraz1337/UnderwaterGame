@@ -1,10 +1,11 @@
-from multiprocessing.spawn import import_main_path
 import sys
 import pygame
 import Agent as ag
 import Obstacles as ob
 import GameManager as gm
+import numpy as np
 import random
+
 
 pygame.init()
 
@@ -22,11 +23,11 @@ screen = pygame.display.set_mode(size)
 # Test Agent and test screen display
 a0 = ag.Agent([200, 25], 5, screen)
 a1 = ag.Agent([34, 146], 5, screen)
-a2 = ag.Agent([88, 312], 5, screen)
-a3 = ag.Agent([312, 312], 5, screen)
+a2 = ag.Agent([98, 341], 5, screen)
+a3 = ag.Agent([302, 341], 5, screen)
 a4 = ag.Agent([366, 146], 5, screen)
-o0 = ob.Obstacles((50, 50, 100, 75), [random.randint(2,8), random.randint(2,8)])
-o1 = ob.Obstacles((300, 200, 90, 67), [random.randint(2,6), random.randint(2,6)])
+o0 = ob.Obstacles((50, 50, 50, 33), [random.randint(2,8), random.randint(2,8)])
+o1 = ob.Obstacles((230, 200, 45, 33), [random.randint(3,8), random.randint(3,8)])
 A = []
 O = []
 A.append(a0)
@@ -37,10 +38,12 @@ A.append(a4)
 O.append(o0)
 O.append(o1)
 
-
+linkTable = np.zeros([len(A), len(A)])
+linkTable[1][3] = 1
+linkTable[3][4] = -1
 
 while 1:
-    timeDelta = clock.tick()
+    timeDelta = clock.tick(33)
     i:ob.Obstacles
     j:ag.Agent
     for event in pygame.event.get():
@@ -57,7 +60,7 @@ while 1:
     
     for i in O:
         i.DrawObstacle(screen)
-    gm.DrawConnection(A, screen)
+    gm.DrawConnection(linkTable, A, screen)
     
     pygame.display.update()
     
